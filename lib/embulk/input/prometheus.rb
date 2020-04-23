@@ -58,8 +58,7 @@ module Embulk
           params[:options][n.to_sym] =  task[n] if task[n]
         end
 
-        prometheus = ::Prometheus::ApiClient.client(params)
-        result = JSON.parse(prometheus.get(
+        result = JSON.parse(::Prometheus::ApiClient.client(params).get(
           'query_range',
           query: task['query'],
           start: (Time.now - task['since']).strftime("%Y-%m-%dT%H:%M:%S.%LZ"),
@@ -67,13 +66,12 @@ module Embulk
           step:  "#{task['step']}s",
         ).body)
 
-        if result['status'] == 'success'
-          result['data']['result'].each do |r|
-            r["values"].each do |v|
-              page_builder.add([r["metric"][task["element_key"]], v[0], v[1]])
-            end
+        result['data']['result'].each do |r|
+          r["values"].each do |v|
+            page_builder.add([r["metric"][task["element_key"]], v[0], v[1]])
           end
-        end
+        end if result['status'] == 'success'
+
         page_builder.finish
         task_report = {}
         return task_report
