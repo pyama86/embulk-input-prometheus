@@ -1,32 +1,18 @@
 # Prometheus input plugin for Embulk
 
-TODO: Write short description here and embulk-input-prometheus.gemspec file.
-
-## Overview
-
-* **Plugin type**: input
-* **Resume supported**: yes
-* **Cleanup supported**: yes
-* **Guess supported**: no
+Load from prometheus time series data.
 
 ## Configuration
-
-- **option1**: description (integer, required)
-- **option2**: description (string, default: `"myvalue"`)
-- **option3**: description (string, default: `null`)
-
-## Example
 
 ```yaml
 in:
   type: prometheus
-  option1: example1
-  option2: example2
-```
-
-
-## Build
-
-```
-$ rake
+  url: https://example.com
+  query: "(100 * (1 - avg by(instance, consul_dc)(irate(node_cpu_seconds_total{job=~\".*node.exporter\",mode='idle'}[1m]))))"
+  since: 86400    # sec
+  step: 3600      #sec
+  tls:
+    cert_path: "/path/to/api.crt"
+    key_path: "/path/to/api.key"
+    ca_path: "/path/to/api.ca"
 ```
