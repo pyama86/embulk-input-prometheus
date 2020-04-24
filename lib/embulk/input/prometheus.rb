@@ -23,7 +23,7 @@ module Embulk
 
         columns = [
           Column.new(0, "name", :string),
-          Column.new(1, "time", :double),
+          Column.new(1, "time", :long),
           Column.new(2, "value", :double),
         ]
 
@@ -45,10 +45,11 @@ module Embulk
           credentials: {},
         }
 
-        params[:ssl][:client_cert] = OpenSSL::X509::Certificate.new(File.read(task["tls"]["cert_path"])) if task["tls"]["cert_path"]
-        params[:ssl][:client_key] = OpenSSL::PKey::RSA.new(File.read(task["tls"]["key_path"])) if task["tls"]["key_path"]
-        params[:ssl][:ca_file] = task["tls"]["ca_path"] if task["tls"]["ca_path"]
-
+        if task["tls"]
+          params[:ssl][:client_cert] = OpenSSL::X509::Certificate.new(File.read(task["tls"]["cert_path"])) if task["tls"]["cert_path"]
+          params[:ssl][:client_key] = OpenSSL::PKey::RSA.new(File.read(task["tls"]["key_path"])) if task["tls"]["key_path"]
+          params[:ssl][:ca_file] = task["tls"]["ca_path"] if task["tls"]["ca_path"]
+        end
         params[:credentials][:token] = task["token"] if task["token"]
 
         %w(
