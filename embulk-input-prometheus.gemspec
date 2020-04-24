@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "embulk-input-prometheus"
-  spec.version       = "0.1.0"
+  spec.version       = "0.2.0"
   spec.authors       = ["pyama86"]
   spec.summary       = "Prometheus input plugin for Embulk"
   spec.description   = "Loads records from Prometheus."
