@@ -7,6 +7,7 @@ Gem::Specification.new do |spec|
   spec.description   = "Loads records from Prometheus."
   spec.email         = ["pyama@pepabo.com"]
   spec.licenses      = ["MIT"]
+  spec.homepage      = "https://github.com/pyama86/embulk-input-prometheus"
   spec.files         = `git ls-files`.split("\n") + Dir["classpath/*.jar"]
   spec.test_files    = spec.files.grep(%r{^(test|spec)/})
   spec.require_paths = ["lib"]
