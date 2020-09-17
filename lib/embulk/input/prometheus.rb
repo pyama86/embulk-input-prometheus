@@ -2,6 +2,7 @@ require 'prometheus/api_client'
 require 'openssl'
 require 'json'
 require 'pp'
+require 'time'
 
 module Embulk
   module Input
@@ -13,6 +14,8 @@ module Embulk
           "url" => config.param("url", :string, default: 'http://localhost:9090/api/v1/'),
           "query" => config.param("query", :string),
           "since" => config.param("since", :integer),
+          "start_at" => config.param("start_at", :string),
+          "end_at" => config.param("end_at", :string),
           "step" => config.param("step", :integer),
           "element_key" => config.param("element_key", :string, default: 'instance'),
           "tls" => config.param("tls", :hash, default: nil),
@@ -59,11 +62,22 @@ module Embulk
           params[:options][n.to_sym] =  task[n] if task[n]
         end
 
+        start_at = if task['start_at'] && !task['start_at'].empty?
+                     Time.parse(task['start_at'])
+                   else
+                     Time.now - task['since']
+                   end
+        end_at   = if task['end_at'] && !task['end_at'].empty?
+                     Time.parse(task['end_at'])
+                   else
+                     Time.now
+                   end
+
         result = JSON.parse(::Prometheus::ApiClient.client(params).get(
           'query_range',
           query: task['query'],
-          start: (Time.now - task['since']).strftime("%Y-%m-%dT%H:%M:%S.%LZ"),
-          end:   Time.now.strftime("%Y-%m-%dT%H:%M:%S.%LZ"),
+          start: start_at.strftime("%Y-%m-%dT%H:%M:%S.%LZ"),
+          end:   end_at.strftime("%Y-%m-%dT%H:%M:%S.%LZ"),
           step:  "#{task['step']}s",
         ).body)
 
