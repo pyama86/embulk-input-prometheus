@@ -13,9 +13,9 @@ module Embulk
         task = {
           "url" => config.param("url", :string, default: 'http://localhost:9090/api/v1/'),
           "query" => config.param("query", :string),
-          "since" => config.param("since", :integer),
-          "start_at" => config.param("start_at", :string),
-          "end_at" => config.param("end_at", :string),
+          "since" => config.param("since", :integer, default: 0),
+          "start_at" => config.param("start_at", :string, default: nil),
+          "end_at" => config.param("end_at", :string, default: nil),
           "step" => config.param("step", :integer),
           "element_key" => config.param("element_key", :string, default: 'instance'),
           "tls" => config.param("tls", :hash, default: nil),
